@@ -54,7 +54,7 @@ window.onload = function() {
 
         //console.log('redraw');
         ctx.fillStyle = "rgba(" + gradientRGB[0][0] + "," + gradientRGB[0][1] + "," + gradientRGB[0][2] + ",1.0)"
-        ctx.fillRect(0, 0, 820, 1221);
+        ctx.fillRect(8, 8, 805, 1205);
         simulateArea(ctx, 0, 821, 0, 1221, 3, new Date());
         vizObj.paintMatrixContext = ctx;
         //paintMatrixImage(canvas, [0, 0, 821, 1221], [canvas.offsetLeft, canvas.offsetTop, 825, 1234], vizObj);
@@ -211,17 +211,32 @@ var minOffset = -0.5509;
 var uMeanOffset = -0.8947;
 var vMeanOffset = -0.8782;
 
+var last_simulation_date = 0;
+
 function simulateArea(ctx, xStart, xStop, yStart, yStop, nComponents, date) {
+    var coeff = 1000 * 60 * 5;
+    date = new Date(Math.round(date / coeff) * coeff)
+
+    let simulation_date = date.getTime();
+
+    if (simulation_date == last_simulation_date)
+        return;
+
+    last_simulation_date = simulation_date
+
+    console.log("New simulation");
 
     //console.log(arguments.callee.name + "(" + xStart + "," + xStop + "," + yStart + "," + yStop + "," + nComponents + "," + date + ")");
 
     var t = HourFraction(date);
+
     var hourOffset = date.getTimezoneOffset(); // Get offset in minutes
     hourOffset = hourOffset / 60; //convert hour offsett to fractional hours and add offset to t
     t = t + hourOffset;
 
     var Year = date.getFullYear();
     var Day = dayOfYear(date);
+
 
     nComponents = 3;
     Day = Day - 14;
@@ -263,6 +278,9 @@ function simulateArea(ctx, xStart, xStop, yStart, yStop, nComponents, date) {
     // to avoid negative numbers. This saves storage and memory space
 
     var astro = AstroArgAll(Day, Year, nComponents);
+
+    console.log(String(Year) + String(Day) + String(t));
+
     var xx = 0;
     var yy = 0;
     //abo todo
@@ -318,14 +336,6 @@ function simulateArea(ctx, xStart, xStop, yStart, yStop, nComponents, date) {
                                 amplitudes[yy][xx] = amplitude;
                                 angles[yy][xx] = angle;
                                 colors[yy][xx] = colorIndex;
-                                /*
-                                let rgb_color = gradientRGB[colorIndex];
-
-                                ctx.fillStyle = "rgba(" + rgb_color[0] + ", " + rgb_color[1] + "," + rgb_color[2] + ", 1.0)";
-                                //ctx.fillRect(xx - 1, yy, 7, 7);
-                                //ctx.fillRect(xx - 1, yy, 1, 1);
-                                ctx.fillRect(xx, yy, 1, 1);
-                                */
                             }
 
                         }

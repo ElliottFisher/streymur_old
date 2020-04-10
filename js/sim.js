@@ -10,9 +10,12 @@ var uMeanOffset = -0.8947;
 var vMeanOffset = -0.8782;
 
 function simulateArea(xStart, xStop, yStart, yStop, nComponents, date) {
+
+    console.log(date);
     console.log(arguments.callee.name + "(" + xStart + "," + xStop + "," + yStart + "," + yStop + "," + nComponents + "," + date + ")");
 
     var t = HourFraction(date);
+
     var hourOffset = date.getTimezoneOffset(); // Get offset in minutes
     hourOffset = hourOffset / 60; //convert hour offsett to fractional hours and add offset to t
     t = t + hourOffset;
@@ -23,6 +26,8 @@ function simulateArea(xStart, xStop, yStart, yStop, nComponents, date) {
     nComponents = 3;
     Day = Day - 14;
     t = t + 24 * 14;
+
+    console.log(String(Year) + String(Day) + String(t));
 
     //Round all coordinates to nearest integer
     xStart = Math.round(xStart);
