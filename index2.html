@@ -5,8 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no" />
     <title>Streymur</title>
-
-    <link rel="stylesheet" href="css/style.css" />
+    <!--<link rel="stylesheet" href="css/style.css" />-->
 
     <script type="text/javascript" src="js/Components/M2Inc.js"></script>
     <script type="text/javascript" src="js/Components/M2Maj.js"></script>
@@ -23,47 +22,30 @@
     <script type="text/javascript" src="js/Components/map.js"></script>
     <script type="text/javascript" src="js/Components/uMean.js"></script>
     <script type="text/javascript" src="js/Components/vMean.js"></script>
+    <script type="text/javascript" src="js/map.js"></script>
     <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="js/hammer.min.js"></script>
     <script type="text/javascript" src="js/helpers.js"></script>
     <script type="text/javascript" src="js/visDef.js"></script>
     <script type="text/javascript" src="js/visualization.js"></script>
-    <script type="text/javascript" src="js/geo.js"></script>
     <script type="text/javascript" src="js/gradient.js"></script>
-    <script type="text/javascript" src="js/sim.js"></script>
-    <script type="text/javascript" src="js/gps.js"></script>
-    <script type="text/javascript">
-        $(window).on("load", ready);
-    </script>
+    <script type="text/javascript" src="streymur.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+        
+        #mapCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 
 <body id="body">
-    <div id="Map" class="appPage">
-        <div id="TimeContainer">
-            <img src="img/carat-left.svg" class="timeButton" onclick="time(false)" style="margin-left: 0.25em;float:left;" id="TimeFalse" />
-            <span id="MapSelectedDate"></span>
-            <img src="img/carat-right.svg" class="timeButton" onclick="time(true)" style="margin-right: 0.25em;float:right;" id="TimeTrue" />
-        </div>
-
-        <div id="TouchLayer">
-        </div>
-
-        <div id="LocationInfo">
-            <img id="LocationInfoIcon" src="img/location-white.svg"></img>
-            <table>
-                <tr>
-                    <td id="LocationInfoAngle" />
-                </tr>
-                <tr>
-                    <td id="LocationInfoAmplitude" />
-                </tr>
-            </table>
-        </div>
-
-        <img id="LandMap" src="img/landmap.svg" style="z-index: 12" />
-        <canvas id="Arrows" style="z-index: 10;"></canvas>
-        <canvas id="PreviewOcean" style="z-index: 9;"></canvas>
-    </div>
+    <canvas id="mapCanvas"></canvas>
+    </canvas>
 </body>
 
 </html>

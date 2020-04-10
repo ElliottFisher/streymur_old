@@ -5,8 +5,9 @@ Initializes the the canvases used for painting matrices
 */
 
 function initVisualization() {
+    //console.log(arguments.callee.name);
     vizObj.selectedTime = new Date();
-    fitLandMap();
+    //fitLandMap();
     initPage();
     // The Images canvas is used to store a complete image of the matrix. This image is used for preview zoom and pan
     $('#MapContent').width(vizObj.viewPortSize[0] + 'px');
@@ -49,13 +50,13 @@ function initVisualization() {
     vizObj.contextArrows = arrowsCanvas.getContext("2d");
 
     //Set the canvas size
-    var ca = document.getElementById('PreviewLand');
+    //var ca = document.getElementById('PreviewLand');
     //vizObj.con          = ca.getContext("2d");
     vizObj.displaySize = [vizObj.viewPortSize[0], vizObj.viewPortSize[1]];
     vizObj.interPolate = false;
     vizObj.paintArrows = true;
-    $('#PreviewLand').height(vizObj.viewPortSize[1] + 'px');
-    $('#PreviewLand').width('100%');
+    //$('#PreviewLand').height(vizObj.viewPortSize[1] + 'px');
+    //$('#PreviewLand').width('100%');
     vizObj.canvasStart = [0, 0];
     vizObj.canvasStop = [vizObj.viewPortSize[0], vizObj.viewPortSize[1]];
     document.onmousemove = function(e) {
@@ -71,7 +72,9 @@ function initVisualization() {
 }
 
 function fitLandMap() {
-    var width = $('#LandMap').width();
+    //console.log(arguments.callee.name);
+
+    var width = $('#m').width();
     var height = $('#LandMap').height();
 
     var sX = $('#Map').width() / width; //Calculate scaling factor for x-axis
@@ -101,7 +104,8 @@ function fitLandMap() {
 }
 
 function scrollInit() {
-    fitLandMap
+    //console.log(arguments.callee.name);
+    //fitLandMap
     $('#Map').bind('mousewheel  DOMMouseScroll MozMousePixelScroll', function(e) {
         var zoom = 0;
         if (e.originalEvent.wheelDelta > 0) {
@@ -120,6 +124,7 @@ function scrollInit() {
 }
 
 function time(direction) {
+    //console.log(arguments.callee.name);
     timeChange(direction);
     simulateArea(vizObj.m0[0], vizObj.m1[0], vizObj.m0[1], vizObj.m1[1], 3, vizObj.selectedTime);
     zoomEnd(vizObj.zoomFactor, vizObj);

@@ -9,15 +9,8 @@ var minOffset = -0.5509;
 var uMeanOffset = -0.8947;
 var vMeanOffset = -0.8782;
 
-function initSim() {
-    var vels = new Array(30);
-    for (var t = 0; t < 30; t++) {
-        vels[t] = simulateCell(550, 740, t);
-    }
-    InitPlaces();
-}
-
 function simulateArea(xStart, xStop, yStart, yStop, nComponents, date) {
+    console.log(arguments.callee.name + "(" + xStart + "," + xStop + "," + yStart + "," + yStop + "," + nComponents + "," + date + ")");
 
     var t = HourFraction(date);
     var hourOffset = date.getTimezoneOffset(); // Get offset in minutes
@@ -69,8 +62,9 @@ function simulateArea(xStart, xStop, yStart, yStop, nComponents, date) {
     var astro = AstroArgAll(Day, Year, nComponents);
     var xx = 0;
     var yy = 0;
-
-    var span = (vizObj.avgSize - 1) / 2;
+    //abo todo
+    var avgSize = 11;
+    var span = (avgSize - 1) / 2;
     var colorIndex = 0;
     for (var x = xStart + span; x < xStop - span; x += vizObj.avgSize) {
         for (var y = yStart + span; y < yStop - span; y += vizObj.avgSize) {
@@ -131,11 +125,14 @@ function simulateArea(xStart, xStop, yStart, yStop, nComponents, date) {
             }
         }
     }
+
+    //abo todo
     vizObj.areaMax = areaMax;
 
 }
 
 function AstroArgAll(d, year, nComponents) {
+    console.log(arguments.callee.name);
     var output = new Array(nComponents);
     for (var i = 0; i < nComponents; i++) {
         output[i] = astroArg(d, year, i);
@@ -144,6 +141,7 @@ function AstroArgAll(d, year, nComponents) {
 }
 
 function astroArg(d0, year0, harmonic) {
+    console.log(arguments.callee.name);
     var reference = new Date(1975, 0, 1);
     var selected = new Date(year0, 1, d0);
     var d = 365 * (year0 - 1975) + Math.round(0.25 * (year0 - 1973)) + d0;
@@ -175,10 +173,12 @@ function astroArg(d0, year0, harmonic) {
 }
 
 function currentDate() {
+    console.log(arguments.callee.name);
     return new Date();
 }
 
 function timeChange(direction) {
+    console.log(arguments.callee.name);
     var newDateObj = new Date();
 
     if (direction == true) {
@@ -192,109 +192,24 @@ function timeChange(direction) {
     $("#MapSelectedDate").text(dateToString(vizObj.selectedTime));
     $(".mapSelectedDate").text(dateToString(vizObj.selectedTime));
     GPSDisplayUpdate(vizObj.lat, vizObj.lon);
-
 }
 
 function Point(x, y, z) {
+    console.log(arguments.callee.name);
     this.x = x;
     this.y = y;
     this.z = z;
 }
 
 function HourFraction(date) {
+    console.log(arguments.callee.name);
     var hour = date.getHours();
     hour = hour + (date.getMinutes() / 60);
     return hour;
 }
 
-function GetArea(Index) {
-
-    var Year = vizObj.selectedTime.getFullYear();
-    var Month = vizObj.selectedTime.getMonth();
-    var Day = vizObj.selectedTime.getDate();
-    var Hour = 0;
-    var Minutes = 0;
-    var DayOfYear = dayOfYear(vizObj.selectedTime);
-
-    //Define area
-    var areaSize = Places[Index].Size;
-    var start = [Places[Index].X, Places[Index].Y];
-
-    //Define how time resolution in minutes
-    var steps = 24; //vizObj.times.t.length;
-    var dt = 60; // vizObj.timeIncrement;
-    var points = new Array(steps);
-    //Variable for holding amplitudes
-    var a = 0;
-    var aSteps = new Array(steps);
-    var angle = 0;
-    var angleSteps = new Array(steps);
-
-    for (var step = 0; step < steps; step++) {
-        var temp = new Date(Year, Month, Day, 0, 0, 0);
-        temp.setMinutes(temp.getMinutes() + (dt * step));
-        //var t = (dt*step)/60;
-        a = 0;
-        angle = 0;
-        simulateArea(start[0], start[0] + areaSize, start[1], start[1] + areaSize, 3, temp);
-
-        // Calculate average for selected time
-        for (var x = start[0]; x < start[0] + areaSize; x++) {
-            for (var y = start[1]; y < start[1] + areaSize; y++) {
-                a = a + amplitudes[y][x];
-                angle = angle + angles[y][x];
-            }
-        }
-        a = a / (areaSize * areaSize);
-        angle = angle / (areaSize * areaSize);
-        var p = new Point(temp, a.toFixed(3), rad2deg(angle));
-        points[step] = p;
-
-        //aSteps[step] = a;
-        //angleSteps[step] = angle;
-    }
-
-    Places[Index].Points = points;
-
-
-}
-
-function Place(Name, X, Y, Size, Points) {
-    this.Name = Name;
-    this.X = X;
-    this.Y = Y;
-    this.Size = Size;
-    this.Points = Points;
-
-}
-
-var Places = new Array();
-
-function InitPlaces() {
-    Places.push(new Place('Nólsoyarfjørður', 565, 495, 10));
-    Places.push(new Place('Mykinesfjørður', 154, 368, 10));
-    Places.push(new Place('Skopunarfjørður', 527, 565, 20));
-    Places.push(new Place('Vestmannasund', 325, 336, 5));
-    Places.push(new Place('Suðuroyarfjørður', 546, 909, 10));
-
-
-    /*
-        Places[0] = new Place('Suðuroyarfjørður', 546,909,10);
-
-
-        Places[0] = new Place('Vestanfyri', 205,881,1);
-        Places[1] = new Place('Mykinesfjørður', 154,368,10);
-        Places[2] = new Place('Skopunarfjørður', 527,565,20);
-        Places[3] = new Place('Eiðisflógvin', 340,125,5);
-        Places[4] = new Place('Vestmannasund', 325,336,5);
-        Places[5] = new Place('Fugloyarfjørður', 761,123,4);
-        Places[6] = new Place('Djúpini', 497,124,10);
-        //Places[7] = new Place('Norðurøkið', 527,565,20);
-        //Places[8] = new Place('Vesturøkið', 527,565,20);*/
-
-}
-
 function simulateCell(x, y, t) {
+    console.log(arguments.callee.name);
     // Calculate the radian frequencies for the components
     var wts = [periodsRad[0] * t, periodsRad[1] * t, periodsRad[2] * t];
 

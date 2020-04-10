@@ -1,18 +1,24 @@
 function ready() {
-    console.log("other ready");
+    //  console.log(arguments.callee.name);
+
     var delay = 1;
     initVisualization();
-    scrollInit();
-    initSim();
-    simulateArea(vizObj.m0[0], vizObj.m1[0], vizObj.m0[1], vizObj.m1[1], 3, vizObj.selectedTime);
-    zoomEnd(vizObj.zoomFactor, vizObj);
-    paintArrows(vizObj);
+    //scrollInit();
+    //initSim();
+    //simulateArea(vizObj.m0[0], vizObj.m1[0], vizObj.m0[1], vizObj.m1[1], 3, vizObj.selectedTime);
+    //zoomEnd(vizObj.zoomFactor, vizObj);
+    //paintArrows(vizObj);
+
 }
 
+
 function initPage() {
+    // console.log(arguments.callee.name);
     var mapSize = [$('#Map').first().outerWidth(), $('#Map').first().outerHeight()];
     vizObj.viewPortSize = [mapSize[0], mapSize[1]];
 
+    //nowButtonClick();
+    //return;
     //Get the scale canvas and adjust its size
     var canvas = document.getElementById('Scale');
     if (canvas) {
@@ -54,6 +60,7 @@ function initPage() {
 
 /* Matrix functions */
 function Create2DArray(rows, columns) {
+    //console.log(arguments.callee.name);
     rows = Math.round(rows);
     columns = Math.round(columns);
     var x = new Array(rows);
@@ -64,13 +71,14 @@ function Create2DArray(rows, columns) {
 }
 
 function nowButtonClick() {
+    console.log(arguments.callee.name);
     var currentTime = getCurrentTime();
     if (currentTime.getTime() != vizObj.selectedTime.getTime()) {
         vizObj.selectedTime = getCurrentTime();
         //waitingState(true);
         setTimeout(function() {
             simulateArea(vizObj.m0[0], vizObj.m1[0], vizObj.m0[1], vizObj.m1[1], 3, vizObj.selectedTime);
-            zoomEnd(vizObj.zoomFactor, vizObj);
+            //zoomEnd(vizObj.zoomFactor, vizObj);
             paintArrows(vizObj);
             //waitingState(false);
         }, vizObj.waitingTimeout);
@@ -85,6 +93,7 @@ function nowButtonClick() {
 }
 
 function getCurrentTime() {
+    console.log(arguments.callee.name);
     var date = new Date();
     var minutes = date.getMinutes();
     minutes = ((((60 / vizObj.timeIncrement) * minutes) / 59).toFixed(0)) / (60 / vizObj.timeIncrement);
@@ -101,6 +110,7 @@ function getCurrentTime() {
 }
 
 function dayOfYear(date) {
+    // console.log(arguments.callee.name);
     var Year = date.getFullYear();
     var onejan = new Date(date.getFullYear(), 0, 1);
 
@@ -123,12 +133,14 @@ function dayOfYear(date) {
 }
 
 function dateToString(date) {
+    console.log(arguments.callee.name);
     var shortYear = date.getFullYear();
     shortYear = Math.floor(shortYear / 100) * 100;
     return lz(date.getDate()) + '/' + lz(date.getMonth() + 1) + '/' + lz(date.getFullYear() - shortYear) + '  ' + lz(date.getHours()) + ':' + lz(date.getMinutes());
 }
 
 function dateToShortString(date) {
+    console.log(arguments.callee.name);
     var shortYear = date.getFullYear();
     shortYear = Math.floor(shortYear / 100) * 100;
     return lz(date.getDate()) + '/' + lz(date.getMonth() + 1) + '/' + lz(date.getFullYear() - shortYear);
@@ -136,6 +148,7 @@ function dateToShortString(date) {
 
 // Add leading zero
 function lz(number) {
+    console.log(arguments.callee.name);
     if (number < 10) {
         return '0' + number;
     } else {
@@ -144,5 +157,6 @@ function lz(number) {
 }
 
 function rad2deg(value) {
+    console.log(arguments.callee.name);
     return value * (180 / Math.PI)
 }

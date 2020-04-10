@@ -1,4 +1,5 @@
 function visProperties() {
+    //console.log(arguments.callee.name);
     var properties = {
         zoomFactor: 1, // Zoomfactor, ranges from 1 to inf
         //offset			: 0,
@@ -45,7 +46,8 @@ function visProperties() {
         waitingTimeout: 1,
         selectedTime: 0,
         areaMax: 0,
-        avgSize: 17,
+        //avgSize: 17,
+        avgSize: 1,
         minDisplayAmp: 0.05,
         previewPosition: 0,
         previewSize: 0,
@@ -80,6 +82,7 @@ function visProperties() {
 }
 
 function PositionStyle(ID) {
+    //console.log(arguments.callee.name);
     var leftStr = $('#' + ID)[0].style.left;
     var topStr = $('#' + ID)[0].style.top;
     leftStr = leftStr.substring(0, leftStr.length - 2);
@@ -88,7 +91,9 @@ function PositionStyle(ID) {
 }
 
 /* Zoom functions   */
+
 function zoomEnd(zf, visData) {
+    //console.log(arguments.callee.name);
     zf = Number(zf);
     visData.zoomFactor = zf;
     if (visData.zoomFactor < 1) {
@@ -189,6 +194,7 @@ function zoomEnd(zf, visData) {
 //var PreviewSize = new Object();
 //var PreviewPosition = new Object();
 function zoomPreview(zf, xoff, yoff, visData) {
+    //console.log(arguments.callee.name);
     visData.contextOcean.clearRect(0, 0, visData.displaySize[0], visData.displaySize[1]);
     visData.contextArrows.clearRect(0, 0, visData.displaySize[0], visData.displaySize[1]);
     zf = Number(zf);
@@ -233,6 +239,7 @@ var previewImageTest = new Object();
 var landPosn = $('#LandMap').position();
 
 function panPreview(ox, oy, visData) {
+    //console.log(arguments.callee.name);
     var left = landPosn.left;
     var top = landPosn.top;
     $('#LandMap').css({ "left": left - ox + 'px' });
@@ -240,6 +247,7 @@ function panPreview(ox, oy, visData) {
 }
 
 function panEnd(ox, oy, visData) {
+    //console.log(arguments.callee.name);
     $('#LandMap').css({ "left": landPosn.left + -ox + 'px' });
     $('#LandMap').css({ "top": landPosn.top - oy + 'px' });
     zoomEnd(visData.zoomFactor, visData);
@@ -247,6 +255,7 @@ function panEnd(ox, oy, visData) {
 
 /* Mapping functions */
 function calcCoords(screenX, screenY, visData) {
+    //console.log(arguments.callee.name);
     var coords = disp2Matrix(screenX, screenY, visData);
     visData.matrix = coords;
     var latlon = grid2geo(visData.matrix[0], visData.matrix[1], 821)
@@ -262,6 +271,7 @@ function calcCoords(screenX, screenY, visData) {
 }
 
 function disp2Matrix(xIn, yIn, visData) {
+    //console.log(arguments.callee.name);
     var Position = PositionStyle('LandMap');
     var ximg = xIn + (-Position[0]);
     var yimg = yIn + (-Position[1]);
@@ -271,6 +281,7 @@ function disp2Matrix(xIn, yIn, visData) {
 }
 
 function matrix2Disp(xIn, yIn, visData) {
+    //console.log(arguments.callee.name);
     var Position = PositionStyle('LandMap');
     var xDisp = (xIn * visData.xScale) - (-Position[0]);
     var yDisp = (yIn * visData.xScale) - (-Position[1]);
@@ -280,11 +291,14 @@ function matrix2Disp(xIn, yIn, visData) {
 /* Painting functions */
 // Usage confirmed
 function paintMatrixImage(canvasID, matrixCoords, dispCoords, visData) {
+    //console.log(arguments.callee.name);
+    //console.log(matrixCoords);
+    //console.log(dispCoords);
     xStart = (matrixCoords[0]);
     yStart = (matrixCoords[1]);
     xStop = (matrixCoords[2]);
     yStop = (matrixCoords[3]);
-
+    visData.avgSize = 1;
     var span = (visData.avgSize - 1) / 2;
 
     // Calculate the width and height of the matrix (or submatrix) which should be painted
@@ -344,6 +358,7 @@ function paintMatrixImage(canvasID, matrixCoords, dispCoords, visData) {
 }
 
 function paintArrows(visData) {
+    //console.log(arguments.callee.name);
     var canvasID = 'PreviewOcean';
     visData.contextOcean.clearRect(0, 0, visData.displaySize[0], visData.displaySize[1]);
     paintMatrixImage(canvasID, visData.matrixCoords, visData.dispCoords, visData);
@@ -540,6 +555,7 @@ function paintArrows(visData) {
 }
 
 function matrixAverage(m, start, stop) {
+    // console.log(arguments.callee.name);
     var sum = 0;
     var counts = 0; // Only count up if the cells are sea-cells (land cells are ignored when averaging)
     for (var x = start[0]; x < stop[0]; x++) {
@@ -570,6 +586,7 @@ panStartPreviewPosition = new Object();
 var panStartFired = false; // Used to monitor panstart event. Sometimes pan and panend events fire before panstart, this causes unexpected behaviour		
 
 function touchInit(visData) {
+    // console.log(arguments.callee.name);
 
     visData.touchElement = document.getElementById('TouchLayer');
 
