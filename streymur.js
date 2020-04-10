@@ -214,7 +214,7 @@ var vMeanOffset = -0.8782;
 var last_simulation_date = 0;
 
 function simulateArea(ctx, xStart, xStop, yStart, yStop, nComponents, date) {
-    var coeff = 1000 * 60 * 5;
+    var coeff = 1000 * 60 * 15;
     date = new Date(Math.round(date / coeff) * coeff)
 
     let simulation_date = date.getTime();
@@ -225,6 +225,7 @@ function simulateArea(ctx, xStart, xStop, yStart, yStop, nComponents, date) {
     last_simulation_date = simulation_date
 
     console.log("New simulation");
+    console.log("Date: ", date);
 
     //console.log(arguments.callee.name + "(" + xStart + "," + xStop + "," + yStart + "," + yStop + "," + nComponents + "," + date + ")");
 
