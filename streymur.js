@@ -31,49 +31,37 @@ function centerAndResize(canvas) {
     let _zoomFactor = zoomFactorAndOffset(canvas);
     ctx.translate(_zoomFactor.x, _zoomFactor.y);
     ctx.scale(_zoomFactor.factor, _zoomFactor.factor);
+    trackTransforms(ctx);
 }
 
-
-//    simulateArea(0, 821, 0, 1221, 3, new Date());
-
-//console.log("fillrect!");
-//    ctx.fillStyle = "#000000";
-//    ctx.fillRect(0, 0, 150, 100);
+function redraw(canvas) {
+    let ctx = canvas.getContext("2d");
+    ctx.clear();
+    ctx.fillStyle = "rgba(" + gradientRGB[0][0] + "," + gradientRGB[0][1] + "," + gradientRGB[0][2] + ",1.0)"
+    ctx.fillRect(8, 8, 805, 1205);
+    simulateArea(ctx, 0, 821, 0, 1221, 3, new Date());
+    vizObj.paintMatrixContext = ctx;
+    paintMatrixImage(canvas, [0, 0, 821, 1221], [0, 0, 821, 1221], vizObj);
+    drawMap(ctx);
+}
 
 window.onload = function() {
     let canvas = $("#mapCanvas").get(0);
     let ctx = canvas.getContext('2d');
+    let scaleFactor = 1.1;
+    let lastX = canvas.width / 2,
+        lastY = canvas.height / 2;
+    let dragStart, dragged;
+
     resize(canvas);
-
     centerAndResize(canvas);
-
-    trackTransforms(ctx);
-
-    function redraw() {
-        ctx.clear();
-
-        //console.log('redraw');
-        ctx.fillStyle = "rgba(" + gradientRGB[0][0] + "," + gradientRGB[0][1] + "," + gradientRGB[0][2] + ",1.0)"
-        ctx.fillRect(8, 8, 805, 1205);
-        simulateArea(ctx, 0, 821, 0, 1221, 3, new Date());
-        vizObj.paintMatrixContext = ctx;
-        //paintMatrixImage(canvas, [0, 0, 821, 1221], [canvas.offsetLeft, canvas.offsetTop, 825, 1234], vizObj);
-        paintMatrixImage(canvas, [0, 0, 821, 1221], [0, 0, 821, 1221], vizObj);
-        drawMap(ctx);
-    }
+    redraw(canvas);
 
     $(window).resize(function() {
         resize(canvas);
         centerAndResize(canvas);
-        redraw();
+        redraw(canvas);
     });
-
-    redraw();
-
-    var lastX = canvas.width / 2,
-        lastY = canvas.height / 2;
-
-    var dragStart, dragged;
 
     canvas.addEventListener('mousedown', function(evt) {
         document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
@@ -90,7 +78,7 @@ window.onload = function() {
         if (dragStart) {
             var pt = ctx.transformedPoint(lastX, lastY);
             ctx.translate(pt.x - dragStart.x, pt.y - dragStart.y);
-            redraw();
+            redraw(canvas);
         }
     }, false);
 
@@ -99,15 +87,13 @@ window.onload = function() {
         if (!dragged) zoom(evt.shiftKey ? -1 : 1);
     }, false);
 
-    var scaleFactor = 1.1;
-
     var zoom = function(clicks) {
         var pt = ctx.transformedPoint(lastX, lastY);
         ctx.translate(pt.x, pt.y);
         var factor = Math.pow(scaleFactor, clicks);
         ctx.scale(factor, factor);
         ctx.translate(-pt.x, -pt.y);
-        redraw();
+        redraw(canvas);
     }
 
     var handleScroll = function(evt) {
@@ -119,6 +105,12 @@ window.onload = function() {
 
     canvas.addEventListener('DOMMouseScroll', handleScroll, false);
     canvas.addEventListener('mousewheel', handleScroll, false);
+    /*
+        canvas.addEventListener('gestureend', function(e) {
+            console.log('pinch');
+            zoom(e.scale);
+        }, false);
+        */
 };
 
 function trackTransforms(ctx) {
@@ -237,7 +229,6 @@ function simulateArea(ctx, xStart, xStop, yStart, yStop, nComponents, date) {
 
     var Year = date.getFullYear();
     var Day = dayOfYear(date);
-
 
     nComponents = 3;
     Day = Day - 14;
