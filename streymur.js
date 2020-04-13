@@ -97,6 +97,7 @@ window.onload = function() {
     }
 
     var handleScroll = function(evt) {
+        console.log('scroll');
         var delta = evt.wheelDelta ? evt.wheelDelta / 40 : evt.detail ? -evt.detail : 0;
 
         if (delta) zoom(delta);
@@ -107,8 +108,9 @@ window.onload = function() {
     canvas.addEventListener('mousewheel', handleScroll, false);
 
     canvas.addEventListener('gestureend', function(e) {
+        alert('pinch');
         console.log('pinch');
-        zoom(e.scale);
+        //zoom(e.scale);
     }, false);
 };
 
