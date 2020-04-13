@@ -34,14 +34,16 @@ function centerAndResize(canvas) {
     trackTransforms(ctx);
 }
 
-function redraw(canvas) {
+function redraw(canvas, drawSimulation = false) {
     let ctx = canvas.getContext("2d");
     ctx.clear();
     ctx.fillStyle = "rgba(" + gradientRGB[0][0] + "," + gradientRGB[0][1] + "," + gradientRGB[0][2] + ",1.0)"
     ctx.fillRect(8, 8, 805, 1205);
-    simulateArea(ctx, 0, 821, 0, 1221, 3, new Date());
-    vizObj.paintMatrixContext = ctx;
-    paintMatrixImage(canvas, [0, 0, 821, 1221], [0, 0, 821, 1221], vizObj);
+    if (drawSimulation) {
+        simulateArea(ctx, 0, 821, 0, 1221, 3, new Date());
+        vizObj.paintMatrixContext = ctx;
+        paintMatrixImage(canvas, [0, 0, 821, 1221], [0, 0, 821, 1221], vizObj);
+    }
     drawMap(ctx);
 }
 
@@ -55,17 +57,16 @@ window.onload = function() {
 
     resize(canvas);
     centerAndResize(canvas);
-    redraw(canvas);
+    redraw(canvas, true);
 
     $(window).resize(function() {
         resize(canvas);
         centerAndResize(canvas);
-        redraw(canvas);
+        redraw(canvas, true);
     });
 
-
-
-    function handlePanStart(evt) {
+    let handlePanStart = function(evt) {
+        console.log('a');
         document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
         lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
         lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
@@ -73,8 +74,82 @@ window.onload = function() {
         dragged = false;
     }
 
+    let handlePanMove = function(evt) {
+        console.log('b');
+        lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+        lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+        dragged = true;
+        if (dragStart) {
+            var pt = ctx.transformedPoint(lastX, lastY);
+            ctx.translate(pt.x - dragStart.x, pt.y - dragStart.y);
+            redraw(canvas, false);
+        }
+    }
 
-    function handlePanMove(evt) {
+    let handlePanEnd = function(evt) {
+        console.log('c');
+        dragStart = null;
+        if (!dragged)
+            zoom(evt.shiftKey ? -1 : 1);
+        else
+            redraw(canvas, true);
+    }
+
+    var zoom = function(clicks) {
+        console.log('d');
+        var pt = ctx.transformedPoint(lastX, lastY);
+        ctx.translate(pt.x, pt.y);
+        var factor = Math.pow(scaleFactor, clicks);
+        ctx.scale(factor, factor);
+        ctx.translate(-pt.x, -pt.y);
+        redraw(canvas, true);
+    }
+
+    var handleScroll = function(evt) {
+        console.log('scroll');
+        var delta = evt.wheelDelta ? evt.wheelDelta / 40 : evt.detail ? -evt.detail : 0;
+
+        if (delta) zoom(delta);
+        return evt.preventDefault() && false;
+    };
+
+    var hammer = true;
+
+    if (hammer) {
+        var hammertime = new Hammer(canvas, {});
+
+        hammertime.on('panstart', function(evt) {
+            handlePanStart(evt.srcEvent);
+        });
+
+        hammertime.on('panmove', function(evt) {
+            handlePanMove(evt.srcEvent);
+        });
+
+        hammertime.on('panend', function(evt) {
+            handlePanEnd(evt.srcEvent);
+        });
+
+    } else {
+        canvas.addEventListener('mousedown', handlePanStart, false);
+        canvas.addEventListener('mousemove', handlePanMove, false);
+        canvas.addEventListener('mouseup', handlePanEnd, false);
+        canvas.addEventListener('DOMMouseScroll', handleScroll, false);
+        canvas.addEventListener('mousewheel', handleScroll, false);
+        canvas.addEventListener('mouseup', handlePanEnd, false);
+    }
+
+
+    /*
+    canvas.addEventListener('mousedown', function(evt) {
+        document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+        lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+        lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+        dragStart = ctx.transformedPoint(lastX, lastY);
+        dragged = false;
+    }, false);
+
+    canvas.addEventListener('mousemove', function(evt) {
         lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
         lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
         dragged = true;
@@ -83,68 +158,32 @@ window.onload = function() {
             ctx.translate(pt.x - dragStart.x, pt.y - dragStart.y);
             redraw(canvas);
         }
-    }
+    }, false);
 
+    canvas.addEventListener('mouseup', function(evt) {
+        dragStart = null;
+        if (!dragged) zoom(evt.shiftKey ? -1 : 1);
+    }, false);
+*/
+
+
+    //  canvas.addEventListener('DOMMouseScroll', handleScroll, false);
+    // canvas.addEventListener('mousewheel', handleScroll, false);
 
     /*
-        canvas.addEventListener('mousedown', function(evt) {
-            document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-            lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-            lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-            dragStart = ctx.transformedPoint(lastX, lastY);
-            dragged = false;
-        }, false);
+        var hammertime = new Hammer(canvas, {});
 
-        canvas.addEventListener('mousemove', function(evt) {
-            lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-            lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-            dragged = true;
-            if (dragStart) {
-                var pt = ctx.transformedPoint(lastX, lastY);
-                ctx.translate(pt.x - dragStart.x, pt.y - dragStart.y);
-                redraw(canvas);
-            }
-        }, false);
+        hammertime.on('padnstart', function(evt) {
+            handlePanStart(evt.srcEvent);
+        });
 
-        canvas.addEventListener('mouseup', function(evt) {
-            dragStart = null;
-            if (!dragged) zoom(evt.shiftKey ? -1 : 1);
-        }, false);
-
-        var zoom = function(clicks) {
-            var pt = ctx.transformedPoint(lastX, lastY);
-            ctx.translate(pt.x, pt.y);
-            var factor = Math.pow(scaleFactor, clicks);
-            ctx.scale(factor, factor);
-            ctx.translate(-pt.x, -pt.y);
-            redraw(canvas);
-        }
-
-        var handleScroll = function(evt) {
-            console.log('scroll');
-            var delta = evt.wheelDelta ? evt.wheelDelta / 40 : evt.detail ? -evt.detail : 0;
-
-            if (delta) zoom(delta);
-            return evt.preventDefault() && false;
-        };
-
-        canvas.addEventListener('DOMMouseScroll', handleScroll, false);
-        canvas.addEventListener('mousewheel', handleScroll, false);
+        hammertime.on('padnmove', function(evt) {
+            handlePanMove(evt.srcEvent);
+        });
+        hammertime.on('panend', function(evt) {
+            //handlePanEnd(evt.srcEvent);
+        });
     */
-
-    var hammertime = new Hammer(canvas, {});
-
-    hammertime.on('panstart', function(evt) {
-        handlePanStart(evt.srcEvent);
-    });
-
-    hammertime.on('panmove', function(evt) {
-        handlePanMove(evt.srcEvent);
-    });
-    hammertime.on('panend', function(evt) {
-        //handlePanEnd(evt.srcEvent);
-    });
-
 
 
 };
