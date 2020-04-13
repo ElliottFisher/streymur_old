@@ -105,12 +105,11 @@ window.onload = function() {
 
     canvas.addEventListener('DOMMouseScroll', handleScroll, false);
     canvas.addEventListener('mousewheel', handleScroll, false);
-    /*
-        canvas.addEventListener('gestureend', function(e) {
-            console.log('pinch');
-            zoom(e.scale);
-        }, false);
-        */
+
+    canvas.addEventListener('gestureend', function(e) {
+        console.log('pinch');
+        zoom(e.scale);
+    }, false);
 };
 
 function trackTransforms(ctx) {
